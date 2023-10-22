@@ -1,0 +1,59 @@
+version: '3.3'
+services:
+  studentlist:
+    networks: 
+      - studentlist
+    container_name: api
+    volumes:
+      - '$PWD/simple_api/student_age.json:/data/student_age.json'
+    image: 'studentlist:v1'
+
+
+  php:
+    depends_on:
+      - studentlist
+    networks: 
+      - studentlist
+    container_name: ihm-api
+    ports:
+      - '8000:80'
+    environment:
+      - USERNAME=toto
+      - PASSWORD=python
+    volumes:
+      - './website:/var/www/html'
+    image: 'php:apache'
+
+
+  registry:
+    networks: 
+      - studentlist
+    container_name: registry
+    ports:
+      - '8100:5000'
+    image: 'registry:2'
+
+
+  registry-ui:
+    depends_on:
+      - registry
+    networks: 
+      - studentlist      
+    image: joxit/docker-registry-ui
+    restart: always
+    ports:
+      - 8200:80
+    environment:
+      - SINGLE_REGISTRY=true
+      - REGISTRY_TITLE="REGISTRY"
+      - DELETE_IMAGES=true
+      - SHOW_CONTENT_DIGEST=true
+      - NGINX_PROXY_PASS_URL=http://registry:5000
+      - SHOW_CATALOG_NB_TAGS=true
+      - TAGLIST_PAGE_SIZE=10
+      - REGISTRY_SECURED=false
+      - CATALOG_ELEMENTS_LIMIT=10
+    container_name: registry-ui
+
+networks: 
+  studentlist:
