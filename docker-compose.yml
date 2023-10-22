@@ -5,7 +5,7 @@ services:
       - studentlist
     container_name: api
     volumes:
-      - '$PWD/simple_api/student_age.json:/data/student_age.json'
+      - './simple_api/student_age.json:/data/student_age.json'
     image: 'studentlist:v1'
 
 
@@ -16,7 +16,7 @@ services:
       - studentlist
     container_name: ihm-api
     ports:
-      - '8000:80'
+      - '8300:80'
     environment:
       - USERNAME=toto
       - PASSWORD=python
